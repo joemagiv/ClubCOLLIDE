@@ -9,6 +9,8 @@ public class Dancer : MonoBehaviour {
     public bool playerInCircle;
     public bool dancing;
 
+    public bool completedDancing;
+
     public float reverseForce;
 
     private Rigidbody2D rb;
@@ -16,28 +18,98 @@ public class Dancer : MonoBehaviour {
     public float timeBetweenListsSet;
     public float timeBetweenLists;
 
+    public float leavingDancefloorSpeed;
+    public float secondsBeforeLeaving;
+
     public int currentDance;
 
     public float listingForce;
 
     private GameContoller gameController;
 
+    public Animator jetpackAnimator;
+    private Animator dancerAnimator;
+
+    public SpriteRenderer statusSprite;
+
+    public Sprite checkMark;
+    public Sprite sadFace;
+
+    private SpriteRenderer sprite;
+
+    private Spawner parentSpawner;
+
+    public PlayerMovement playerMovement;
+    
+
 	// Use this for initialization
 	void Start () {
+        parentSpawner = GetComponentInParent<Spawner>();
         rb = GetComponent<Rigidbody2D>();
+        dancerAnimator = GetComponent<Animator>();
+        playerMovement = FindObjectOfType<PlayerMovement>().GetComponent<PlayerMovement>();
+
+        sprite = GetComponentInChildren<SpriteRenderer>();
+        RandomizeColor();
+
         timeBetweenLists = timeBetweenListsSet;
+
         gameController = FindObjectOfType<GameContoller>().GetComponent<GameContoller>();
 
         currentDance = Mathf.FloorToInt(Random.Range(0, 4));
+        dancerAnimator.SetTrigger("Dance" + currentDance.ToString());
 
+        jetpackAnimator.SetBool("JetpackActive", true);
+
+        if (gameController.jetpackDisable)
+        {
+            dancerAnimator.SetTrigger("Hover");
+            jetpackAnimator.SetBool("JetpackActive", false);
+        }
+
+    }
+
+    public void NewDance()
+    {
+        currentDance = Mathf.FloorToInt(Random.Range(0, 4));
+        dancerAnimator.SetTrigger("Dance" + currentDance.ToString());
+
+        jetpackAnimator.SetBool("JetpackActive", true);
     }
 
     void OnCollisionEnter2D(Collision2D other)
     {
-        if(other.gameObject.tag == "Player")
+        if(other.gameObject.tag == "Player"|| other.gameObject.tag == "Dancer")
         {
             Rigidbody2D playerRB = other.gameObject.GetComponent<Rigidbody2D>();
             playerRB.AddForce(new Vector2((playerRB.velocity.x+1) * reverseForce, (playerRB.velocity.y+1) * reverseForce));
+        }
+    }
+
+    void RandomizeColor()
+    {
+        int randomColor = Mathf.FloorToInt(Random.Range(0, 5));
+
+        if (randomColor == 0)
+        {
+            sprite.color = Color.blue;
+        }
+        if (randomColor == 1)
+        {
+            sprite.color = Color.red;
+        }
+        if (randomColor == 2)
+        {
+            sprite.color = Color.yellow;
+        }
+        if (randomColor == 3)
+        {
+            sprite.color = Color.magenta;
+        }
+
+        if (randomColor == 4)
+        {
+            sprite.color = Color.green;
         }
     }
 
@@ -65,45 +137,57 @@ public class Dancer : MonoBehaviour {
 
     void DanceInitiated(int danceNumber)
     {
-        Debug.Log("Dance " + danceNumber + " initiated");
-        if (playerInCircle)
+        if (!completedDancing)
         {
-            if (currentDance == danceNumber)
+
+            if (playerInCircle)
             {
-                Debug.Log("Dance confirmed");
-                gameController.AddToScore();
+                if (!playerMovement.playerDancing)
+                {
+                        if (currentDance == danceNumber)
+                        {
+
+                            gameController.AddToScore();
+                            completedDancing = true;
+                            statusSprite.sprite = checkMark;
+                            parentSpawner.CallSpawner();
+                        }
+                        else
+                        {
+
+                            statusSprite.sprite = sadFace;
+                        }
+                    }
+                }
             }
-            else
-            {
-                Debug.Log("Wrong Dance");
-            }
-        }
-    }
+       }
+    
 	
    
 
 	// Update is called once per frame
 	void Update () {
-		if (timeBetweenLists > 0)
+        if (!completedDancing)
         {
-            timeBetweenLists -= Time.deltaTime;
-        } else
-        {
-            timeBetweenLists = timeBetweenListsSet;
-            ApplyListingForce();
-        }
-
-        if (Input.GetButtonDown("Fire1"))
-        {
-            if (playerInCircle)
+            if (timeBetweenLists > 0)
             {
-                Debug.Log("Dance initiated");
+                timeBetweenLists -= Time.deltaTime;
             }
             else
             {
-                Debug.Log("Player not in dance radius");
+                timeBetweenLists = timeBetweenListsSet;
+                ApplyListingForce();
+            }
+        } else
+        {
+            secondsBeforeLeaving -= Time.deltaTime;
+            if (secondsBeforeLeaving < 0)
+            {
+                Transform shredderTransform = FindObjectOfType<Shredder>().GetComponent<Transform>();
+                transform.position = Vector2.MoveTowards(transform.position, shredderTransform.position, leavingDancefloorSpeed);
             }
         }
+
 
         if (Input.GetKeyDown(KeyCode.I))
         {

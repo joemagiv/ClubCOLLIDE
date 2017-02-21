@@ -13,7 +13,7 @@ public class InfluenceCircle : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Enter Detected " + other.name);
+
         if (other.tag == "Player")
         {
             dancer.playerInCircle = true;
@@ -22,7 +22,7 @@ public class InfluenceCircle : MonoBehaviour {
 
     void OnTriggerExit2D(Collider2D other)
     {
-        Debug.Log("Exit Detected " + other.name);
+
         if (other.tag == "Player")
         {
             dancer.playerInCircle = false;
