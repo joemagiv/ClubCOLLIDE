@@ -21,6 +21,8 @@ public class GameContoller : MonoBehaviour {
 
     public bool jetpackDisable;
 
+    public bool gameStarted;
+
 
     // Use this for initialization
     void Start () {

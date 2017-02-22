@@ -68,71 +68,74 @@ public class PlayerMovement : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-
-        if (!gameController.jetpackDisable)
+        if (gameController.gameStarted)
         {
-            if (Input.GetAxis("Vertical") == 1)
+
+            if (!gameController.jetpackDisable)
             {
-                rigidbody2d.AddForce(new Vector2(0, force));
-                jetpackAnimator.SetBool("JetpackActive", true);
-            }
+                if (Input.GetAxis("Vertical") == 1)
+                {
+                    rigidbody2d.AddForce(new Vector2(0, force));
+                    jetpackAnimator.SetBool("JetpackActive", true);
+                }
 
-            if (Input.GetAxis("Vertical") == -1)
-            {
-                rigidbody2d.AddForce(new Vector2(0, -force));
-                jetpackAnimator.SetBool("JetpackActive", true);
+                if (Input.GetAxis("Vertical") == -1)
+                {
+                    rigidbody2d.AddForce(new Vector2(0, -force));
+                    jetpackAnimator.SetBool("JetpackActive", true);
 
-            }
+                }
 
-            if (Input.GetAxis("Horizontal") == 1)
-            {
-                rigidbody2d.AddForce(new Vector2(force, 0));
-                jetpackAnimator.SetBool("JetpackActive", true);
+                if (Input.GetAxis("Horizontal") == 1)
+                {
+                    rigidbody2d.AddForce(new Vector2(force, 0));
+                    jetpackAnimator.SetBool("JetpackActive", true);
 
-            }
+                }
 
-            if (Input.GetAxis("Horizontal") == -1)
-            {
-                rigidbody2d.AddForce(new Vector2(-force, 0));
-                jetpackAnimator.SetBool("JetpackActive", true);
+                if (Input.GetAxis("Horizontal") == -1)
+                {
+                    rigidbody2d.AddForce(new Vector2(-force, 0));
+                    jetpackAnimator.SetBool("JetpackActive", true);
 
-            }
+                }
 
-            if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0)
-            {
-                jetpackAnimator.SetBool("JetpackActive", false);
-            }
+                if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0)
+                {
+                    jetpackAnimator.SetBool("JetpackActive", false);
+                }
 
-            if (Input.GetKeyDown(KeyCode.I))
-            {
-                DanceInitiated(0);
-            }
+                if (Input.GetKeyDown(KeyCode.I))
+                {
+                    DanceInitiated(0);
+                }
 
-            if (Input.GetKeyDown(KeyCode.J))
-            {
-                DanceInitiated(1);
-            }
+                if (Input.GetKeyDown(KeyCode.J))
+                {
+                    DanceInitiated(1);
+                }
 
-            if (Input.GetKeyDown(KeyCode.K))
-            {
-                DanceInitiated(2);
-            }
+                if (Input.GetKeyDown(KeyCode.K))
+                {
+                    DanceInitiated(2);
+                }
 
-            if (Input.GetKeyDown(KeyCode.L))
-            {
-                DanceInitiated(3);
-            }
-        }
-        else
-        {
-            if (timeBetweenLists > 0)
-            {
-                timeBetweenLists -= Time.deltaTime;
+                if (Input.GetKeyDown(KeyCode.L))
+                {
+                    DanceInitiated(3);
+                }
             }
             else
             {
-                timeBetweenLists = timeBetweenListsSet;
-                ApplyListingForce();
+                if (timeBetweenLists > 0)
+                {
+                    timeBetweenLists -= Time.deltaTime;
+                }
+                else
+                {
+                    timeBetweenLists = timeBetweenListsSet;
+                    ApplyListingForce();
+                }
             }
         }
     }
