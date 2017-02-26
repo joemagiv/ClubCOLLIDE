@@ -13,14 +13,21 @@ public class PlayerMovement : MonoBehaviour {
     public float timeBetweenLists;
     public float timeBetweenListsSet;
 
+    public Transform endingPosition;
+    public float endingMoveSpeed;
+
     public bool playerDancing;
 
+    private bool atFinalPosition;
+
+    private BoxCollider2D playerCollider;
 
     // Use this for initialization
     void Start () {
         rigidbody2d = GetComponent<Rigidbody2D>();
         playerAnimator = GetComponent<Animator>();
         gameController = FindObjectOfType<GameContoller>().GetComponent<GameContoller>();
+        playerCollider = GetComponent<BoxCollider2D>();
 
 	}
 
@@ -42,6 +49,24 @@ public class PlayerMovement : MonoBehaviour {
     {
         playerDancing = false;
     }
+
+    private int FinalDanceCalled;
+
+    private void FinalDance() {
+        FinalDanceCalled++;
+        if (FinalDanceCalled == 1)
+        {
+            playerAnimator.SetTrigger("FinalDance");
+
+            VidScreen[] vidscreens = FindObjectsOfType<VidScreen>();
+            foreach (VidScreen vidscreen in vidscreens)
+            {
+                Animator anim = vidscreen.GetComponent<Animator>();
+                anim.SetTrigger("Hearts");
+            }
+        }
+    }
+
 
     void ApplyListingForce()
     {
@@ -68,75 +93,98 @@ public class PlayerMovement : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        if (gameController.gameStarted)
+
+        Debug.Log("Vertical " + Input.GetAxis("Vertical") + " Horizontal " + Input.GetAxis("Horizontal"));
+
+        if (atFinalPosition)
         {
+            playerAnimator.SetBool("FinalDance", true);
+        }
 
-            if (!gameController.jetpackDisable)
+        if (!gameController.gameEnding)
+        {
+            if (gameController.gameStarted)
             {
-                if (Input.GetAxis("Vertical") == 1)
+
+                if (!gameController.jetpackDisable)
                 {
-                    rigidbody2d.AddForce(new Vector2(0, force));
-                    jetpackAnimator.SetBool("JetpackActive", true);
-                }
+                    if (Input.GetAxis("Vertical") > 0.5f)
+                    {
+                        rigidbody2d.AddForce(new Vector2(0, force));
+                        jetpackAnimator.SetBool("JetpackActive", true);
+                    }
 
-                if (Input.GetAxis("Vertical") == -1)
-                {
-                    rigidbody2d.AddForce(new Vector2(0, -force));
-                    jetpackAnimator.SetBool("JetpackActive", true);
+                    if (Input.GetAxis("Vertical") < -0.5f)
+                    {
+                        rigidbody2d.AddForce(new Vector2(0, -force));
+                        jetpackAnimator.SetBool("JetpackActive", true);
 
-                }
+                    }
 
-                if (Input.GetAxis("Horizontal") == 1)
-                {
-                    rigidbody2d.AddForce(new Vector2(force, 0));
-                    jetpackAnimator.SetBool("JetpackActive", true);
+                    if (Input.GetAxis("Horizontal") > 0.5f)
+                    {
+                        rigidbody2d.AddForce(new Vector2(force, 0));
+                        jetpackAnimator.SetBool("JetpackActive", true);
 
-                }
+                    }
 
-                if (Input.GetAxis("Horizontal") == -1)
-                {
-                    rigidbody2d.AddForce(new Vector2(-force, 0));
-                    jetpackAnimator.SetBool("JetpackActive", true);
+                    if (Input.GetAxis("Horizontal") < -0.5f)
+                    {
+                        rigidbody2d.AddForce(new Vector2(-force, 0));
+                        jetpackAnimator.SetBool("JetpackActive", true);
 
-                }
+                    }
 
-                if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0)
-                {
-                    jetpackAnimator.SetBool("JetpackActive", false);
-                }
+                    if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0)
+                    {
+                        jetpackAnimator.SetBool("JetpackActive", false);
+                    }
 
-                if (Input.GetKeyDown(KeyCode.I))
-                {
-                    DanceInitiated(0);
-                }
 
-                if (Input.GetKeyDown(KeyCode.J))
-                {
-                    DanceInitiated(1);
-                }
 
-                if (Input.GetKeyDown(KeyCode.K))
-                {
-                    DanceInitiated(2);
-                }
+                    if (Input.GetButtonDown("Dance0"))
+                    {
+                        DanceInitiated(0);
+                    }
 
-                if (Input.GetKeyDown(KeyCode.L))
-                {
-                    DanceInitiated(3);
-                }
-            }
-            else
-            {
-                if (timeBetweenLists > 0)
-                {
-                    timeBetweenLists -= Time.deltaTime;
+                    if (Input.GetButtonDown("Dance1"))
+                    {
+                        DanceInitiated(1);
+                    }
+
+                    if (Input.GetButtonDown("Dance2"))
+                    {
+                        DanceInitiated(2);
+                    }
+
+                    if (Input.GetButtonDown("Dance3"))
+                    {
+                        DanceInitiated(3);
+                    }
                 }
                 else
                 {
-                    timeBetweenLists = timeBetweenListsSet;
-                    ApplyListingForce();
+                    if (timeBetweenLists > 0)
+                    {
+                        timeBetweenLists -= Time.deltaTime;
+                    }
+                    else
+                    {
+                        timeBetweenLists = timeBetweenListsSet;
+                        ApplyListingForce();
+                    }
                 }
             }
         }
-    }
+        else
+        {
+            transform.position = Vector2.MoveTowards(transform.position, endingPosition.transform.position, endingMoveSpeed);
+            playerCollider.enabled = false;
+            jetpackAnimator.SetBool("JetpackActive", true);
+            if (transform.position == endingPosition.position)
+            {
+                Invoke("FinalDance", 2f);
+            }
+        }
+    } 
 }

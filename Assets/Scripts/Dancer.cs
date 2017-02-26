@@ -40,6 +40,8 @@ public class Dancer : MonoBehaviour {
     private Spawner parentSpawner;
 
     public PlayerMovement playerMovement;
+
+    private BoxCollider2D personalCollider;
     
 
 	// Use this for initialization
@@ -47,6 +49,7 @@ public class Dancer : MonoBehaviour {
         parentSpawner = GetComponentInParent<Spawner>();
         rb = GetComponent<Rigidbody2D>();
         dancerAnimator = GetComponent<Animator>();
+        personalCollider = GetComponent<BoxCollider2D>();
         playerMovement = FindObjectOfType<PlayerMovement>().GetComponent<PlayerMovement>();
 
         sprite = GetComponentInChildren<SpriteRenderer>();
@@ -180,6 +183,7 @@ public class Dancer : MonoBehaviour {
             }
         } else
         {
+            personalCollider.enabled = false;
             secondsBeforeLeaving -= Time.deltaTime;
             if (secondsBeforeLeaving < 0)
             {
@@ -189,22 +193,22 @@ public class Dancer : MonoBehaviour {
         }
 
 
-        if (Input.GetKeyDown(KeyCode.I))
+        if (Input.GetButtonDown("Dance0"))
         {
             DanceInitiated(0);
         }
 
-        if (Input.GetKeyDown(KeyCode.J))
+        if (Input.GetButtonDown("Dance1"))
         {
             DanceInitiated(1);
         }
 
-        if (Input.GetKeyDown(KeyCode.K))
+        if (Input.GetButtonDown("Dance2"))
         {
             DanceInitiated(2);
         }
 
-        if (Input.GetKeyDown(KeyCode.L))
+        if (Input.GetButtonDown("Dance3"))
         {
             DanceInitiated(3);
         }

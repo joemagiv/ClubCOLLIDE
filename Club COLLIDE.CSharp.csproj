@@ -80,6 +80,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\ExitWalls.cs" />
+    <Compile Include="Assets\FinalDancer.cs" />
     <Compile Include="Assets\Intro.cs" />
     <Compile Include="Assets\Jetpack.cs" />
     <Compile Include="Assets\Scripts\CameraTracker.cs" />
@@ -89,6 +91,7 @@
     <Compile Include="Assets\Scripts\PlayerMovement.cs" />
     <Compile Include="Assets\Shredder.cs" />
     <Compile Include="Assets\Spawner.cs" />
+    <Compile Include="Assets\VidScreen.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>

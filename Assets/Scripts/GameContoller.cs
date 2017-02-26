@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameContoller : MonoBehaviour {
 
@@ -23,10 +24,23 @@ public class GameContoller : MonoBehaviour {
 
     public bool gameStarted;
 
+    public float timeBeforeGameEnding;
+
+    public bool gameEnding;
+    public bool gameOver;
+
+    public GameObject finalDancer;
+
+    public GameObject pushers;
+
+    public float timeToGameOver;
+
 
     // Use this for initialization
     void Start () {
         score = 0;
+        finalDancer.SetActive(false);
+        pushers.SetActive(false);
 	}
 
     public void AddToScore()
@@ -87,6 +101,27 @@ public class GameContoller : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+        timeToGameOver -= Time.deltaTime;
+
+        if (timeToGameOver <= 0)
+        {
+            int scene = SceneManager.GetActiveScene().buildIndex;
+            SceneManager.LoadScene(scene, LoadSceneMode.Single);
+        }
+
+        if (!gameEnding)
+        {
+            timeBeforeGameEnding -= Time.deltaTime;
+
+            if (timeBeforeGameEnding <= 0)
+            {
+                gameEnding = true;
+                finalDancer.SetActive(true);
+            }
+        }
+
+
 		if(score == 0)
         {
             scoreText.text = "";
@@ -127,7 +162,7 @@ public class GameContoller : MonoBehaviour {
             countdownToSwarm -= Time.deltaTime;
             if (countdownToSwarm < 0)
             {
-                
+                pushers.SetActive(true);
                 swarmActive = true;
                 SwarmGeneration();
             }
