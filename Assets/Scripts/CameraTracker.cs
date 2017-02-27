@@ -18,7 +18,7 @@ public class CameraTracker : MonoBehaviour {
 	void Update () {
         if (gamecontroller.gameStarted)
         {
-            transform.position = new Vector3(Mathf.Clamp(player.transform.position.x, -2.81f, 2.9f), Mathf.Clamp(player.transform.position.y, -20.1f, 20.3f), -10f);
+            transform.position = new Vector3(Mathf.Clamp(player.transform.position.x, -4.18f, 4.28f), Mathf.Clamp(player.transform.position.y, -20.1f, 20.39f), -10f);
         }
       }
 }

@@ -94,7 +94,7 @@ public class PlayerMovement : MonoBehaviour {
     void Update()
     {
 
-        Debug.Log("Vertical " + Input.GetAxis("Vertical") + " Horizontal " + Input.GetAxis("Horizontal"));
+       
 
         if (atFinalPosition)
         {

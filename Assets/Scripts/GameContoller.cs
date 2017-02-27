@@ -41,6 +41,7 @@ public class GameContoller : MonoBehaviour {
         score = 0;
         finalDancer.SetActive(false);
         pushers.SetActive(false);
+
 	}
 
     public void AddToScore()
@@ -97,6 +98,40 @@ public class GameContoller : MonoBehaviour {
         }
     }
 
+    private bool HandVidScreen;
+    void ActivateHandsVidScreen()
+    {
+        if (!HandVidScreen)
+        {
+            HandVidScreen = true;
+            VidScreen[] vidscreens = FindObjectsOfType<VidScreen>();
+            foreach (VidScreen vidscreen in vidscreens)
+            {
+                Animator anim = vidscreen.GetComponent<Animator>();
+                anim.SetTrigger("Hands");
+            }
+        }
+    }
+
+    private bool gameOverScoreCalled;
+    void GameOverScore()
+    {
+        if (!gameOverScoreCalled)
+        {
+            gameOverScoreCalled = true;
+            //PlayerPrefsManager.SetCurrentScore(score);
+           // if(PlayerPrefsManager.GetHighScore() < score)
+           // {
+           // /    PlayerPrefsManager.CheckSetHighScore(score);
+            //    scoreText.text = score.ToString() + "\n High Score!";
+           // }
+           // else
+           // {
+           //     scoreText.text = score.ToString() + "\n High Score: " + PlayerPrefsManager.GetHighScore().ToString();
+          //  }
+
+        }
+    }
 
 	
 	// Update is called once per frame
@@ -118,6 +153,7 @@ public class GameContoller : MonoBehaviour {
             {
                 gameEnding = true;
                 finalDancer.SetActive(true);
+
             }
         }
 
@@ -130,7 +166,13 @@ public class GameContoller : MonoBehaviour {
         {
             if (!jetpackDisable)
             {
-                scoreText.text = score.ToString();
+                if (!gameEnding)
+                {
+                    scoreText.text = score.ToString();
+                } else
+                {
+                    GameOverScore();
+                }
             } else
             {
                 scoreText.text = score.ToString() + "\n Jetpacks Disabled!";
@@ -145,6 +187,7 @@ public class GameContoller : MonoBehaviour {
                 hoverActive = true;
                 SetPlayerHover();
                 jetpackDisable = true;
+                ActivateHandsVidScreen();
             }
         }
 
@@ -166,6 +209,11 @@ public class GameContoller : MonoBehaviour {
                 swarmActive = true;
                 SwarmGeneration();
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
         }
 	}
 }
